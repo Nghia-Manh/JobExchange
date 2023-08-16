@@ -1,0 +1,30 @@
+﻿@{
+    Layout = "_LayoutEmployer";
+}
+
+@model Employer
+<h4 class="text-center mb-5">Thông tin về doanh nghiệp của bạn</h4>
+
+<div class="w-75 mx-auto">
+    <form method="post" asp-controller="App" asp-action="UpdateEmployer">
+        <div class="mb-4">
+            <label asp-for="CompanyName" class="form-label">Tên công ty của bạn <span class="text-danger">*</span></label>
+            <input type="text" asp-for="CompanyName" class="form-control" required>
+        </div>
+        <div class="mb-4">
+            <label asp-for="Email" class="form-label">Email <span class="text-danger">*</span></label>
+            <input asp-for="Email" type="email" class="form-control" required>
+        </div>
+        <div class="mb-4">
+            <label asp-for="Phone" class="form-label">Số điện thoại <span class="text-danger">*</span></label>
+            <input asp-for="Phone" type="text" class="form-control" required>
+        </div>
+        <div class="mb-4">
+            <label asp-for="AddressOfCompany" class="form-label">Địa chỉ <span class="text-danger">*</span></label>
+            <input asp-for="AddressOfCompany" type="text" class="form-control" required>
+        </div>
+        <div class="mb-4 d-flex justify-content-end">
+            <input type="submit" class="btn btn-info form-control w-auto px-3 bg-primary" value="Lưu">
+        </div>
+    </form>
+</div>

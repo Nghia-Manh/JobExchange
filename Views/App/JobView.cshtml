@@ -1,0 +1,110 @@
+﻿@{
+    Layout = "_LayoutEmployer";
+}
+
+@model JobInfo
+<h4 class="text-center mb-4">Thêm thông tin về việc làm</h4>
+
+<div class="w-75 mx-auto border-1">
+    <div class="d-flex justify-content-end">
+        <button type="button" class="add btn btn-primary mb-3" id="addJobButton">Đăng bài</button>
+    </div>
+
+    <div class="border rounded-1 border-secondary-subtle p-4 overflow-auto" style="height: 430px">
+        <div class="mb-4">
+            <label asp-for="Position" class="form-label">Vị trí <span class="text-danger">*</span></label>
+            <input asp-for="Position" type="text" class="form-control" required id="Position">
+        </div>
+        <div>
+            <label asp-for="Describe" class="form-label">Mô tả<span class="text-danger">*</span></label>
+            <input asp-for="Describe" class="form-control" id="Describe" rows="5" required>
+        </div>
+        <div class="mb-4">
+            <label asp-for="Salarymin" class="form-label">Lương tối thiểu<span class="text-danger">*</span></label>
+            <input asp-for="Salarymin" type="text" class="form-control" required id="Salarymin">
+        </div>
+        <div class="mb-4">
+            <label asp-for="Salarymax" class="form-label">Lương tối đa<span class="text-danger">*</span></label>
+            <input asp-for="Salarymax" type="text" class="form-control" required id="Salarymax">
+        </div>
+        <div class="mb-4">
+            <label asp-for="soluong" class="form-label">Số lượng nhân sự<span class="text-danger">*</span></label>
+            <input asp-for="soluong" type="text" class="form-control" required id="soluong">
+        </div>
+        <div class="mb-4">
+            <label asp-for="Address" class="form-label">Địa chỉ <span class="text-danger">*</span></label>
+            <input asp-for="Address" type="text" class="form-control" required id="Address">
+        </div>
+        <div class="mb-4">
+            <label asp-for="TypeJob" class="form-label">Loại việc làm <span class="text-danger">*</span></label>
+            <div asp-for="TypeJob" class="w-100">
+                @Html.DropDownListFor(
+                model => model.TypeJob.Id,
+                (IEnumerable<SelectListItem>)ViewBag.listJobs,"---Select name---",
+                new {@class="form-controller form-select w-100", @name = "TypeJob", @id = "TypeJob_Id"}
+                )
+                @Html.HiddenFor(model => model.TypeJob.NameJob)
+            </div>
+        </div>
+        <div class="">
+            
+        </div>
+    </div>
+</div>
+
+@section scripts {
+    <script>
+        // Hàm xử lý khi người dùng nhấp vào nút "Đăng bài"
+        function addJob() {
+            console.log("hiii")
+            // Lấy dữ liệu từ các trường input và dropdown select
+            var position = document.getElementById("Position").value;
+            var salarymin = document.getElementById("Salarymin").value;
+            var salarymax = document.getElementById("Salarymax").value;
+            var Soluong = document.getElementById("soluong").value;
+            var address = document.getElementById("Address").value;
+            var typeJobId = document.getElementById("TypeJob_Id").value;
+            var describe = document.getElementById("Describe").value;
+
+            // Tạo đối tượng FormData để gửi dữ liệu
+            var formData = new FormData();
+            formData.append("Position", position);
+            formData.append("Salarymin", salarymin);
+            formData.append("Salarymax", salarymax);
+            formData.append("soluong", Soluong);
+            formData.append("Address", address);
+            formData.append("TypeJob.Id", typeJobId);
+            formData.append("Describe", describe);
+
+            // Khởi tạo XMLHttpRequest object
+            var xhr = new XMLHttpRequest();
+            xhr.open("POST", "/App/AddJobs", true);
+            xhr.setRequestHeader("Accept", "application/json");
+
+            // Định nghĩa hàm callback để xử lý khi yêu cầu hoàn thành
+            xhr.onreadystatechange = function () {
+                if (xhr.readyState === XMLHttpRequest.DONE) {
+                    if (xhr.status === 200) {
+                        console.log("Form submitted successfully!");
+                        window.location.href = "/App/ShowJobInfoUser";
+                    } else {
+                        console.error("Error submitting form: " + xhr.statusText);
+                    }
+
+                }
+            };
+
+            // Gửi yêu cầu đăng bài việc làm với dữ liệu formData
+            xhr.send(formData);
+        }
+
+        document.getElementById("addJobButton").addEventListener("click", function () {
+            addJob();
+        });
+
+    </script>
+}
+
+
+
+

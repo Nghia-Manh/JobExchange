@@ -1,0 +1,92 @@
+﻿@{
+    Layout = "_LayoutHomePage";
+}
+
+@model IEnumerable<JobInfo>
+
+<div class="container">
+    <h4 class="text-center mb-4 mt-4">Danh sách các công việc</h4>
+    <div class="row g-4">
+       @* <div>
+            <form asp-action="SearchTypeJobInfo" method="post">
+                <label>Tìm kiếm theo loại công việc:</label>
+                <input type="text" name="typeJobName" />
+                <button type="submit">Tìm kiếm</button>
+            </form>
+        </div>*@
+        @foreach (var jobInfo in Model)
+        {
+            <div class="col-lg-6" data-id="@jobInfo.Id">
+                <div class="d-flex flex-column border rounded-4 p-4" style="height: 100%">
+                    <div class="d-flex justify-content-between">
+                        <div style="font-size:30px"><span style="margin-right:20px">Tên Công ty</span>@jobInfo.Employer.CompanyName</div>
+                        @if (User.IsInRole("admin"))
+                        {
+                            <div class="d-flex gap-3">
+                                <button class="delete btn btn-danger rounded" data-id="@jobInfo.Id">Delete</button>
+                            </div>
+                        }
+                        else
+                        {
+                            <div></div>
+                        }
+                    </div>
+                    <p class="fw-semibold"><span style="margin-right:20px">Tên Vị Trí:</span>@jobInfo.Position</p>
+                    <div><span style="margin-right:20px">Số lượng nhân sự: </span>@jobInfo.soluong</div>
+                    <div><span style="margin-right:20px">Địa chỉ công ty: </span>@jobInfo.Employer.AddressOfCompany</div>
+                    <div><span style="margin-right:20px">Địa chỉ Email: </span>@jobInfo.Employer.Email</div>
+                    <div><span style="margin-right:20px">Số điện thoại: </span>@jobInfo.Employer.Phone</div>
+                    <div class="text-body-secondary mb-4 flex-grow-1" style="font-weight:600"><span style="margin-right:20px">Mô tả:</span> @jobInfo.Describe</div>
+                    <p class="mt-2" style="margin-right:20px; margin-top:10px"><span style="margin-right:20px">Lương:</span>@jobInfo.Salarymin VNĐ - @jobInfo.Salarymax VNĐ </p>
+                    @*<div class="d-flex justify-content-end text-body-secondary"><span style="margin-right:10px">Thời gian tuyển: </span>@jobInfo.PostTime</div>*@
+                </div>
+            </div>
+        }
+        <div class="pagination">
+            @for (int i = 1; i <= ViewBag.TotalPages; i++)
+            {
+                <a href="@Url.Action("ShowJobInfo", new { pageNumber = i })" class="@(ViewBag.CurrentPage == i ? "active" : "")">@i</a>
+            }
+        </div>
+       
+
+    </div>
+</div>
+
+
+@section scripts {
+    <script>
+        function deleteJob(jobId) {
+            // Khởi tạo XMLHttpRequest object
+            var xhr = new XMLHttpRequest();
+
+            xhr.open("DELETE", "/App/Delete/" + jobId, true);
+
+            // Định nghĩa hàm callback để xử lý khi yêu cầu hoàn thành
+            xhr.onreadystatechange = function () {
+                if (xhr.readyState === XMLHttpRequest.DONE) {
+                    if (xhr.status === 200) {
+                        var listItem = document.querySelector("div[data-id='" + jobId + "']");
+                        if (listItem) {
+                            listItem.remove();
+                        }
+                    } else {
+                        console.error("Lỗi khi xóa công việc: " + xhr.status);
+                    }
+                }
+            };
+
+            // Gửi yêu cầu xóa công việc
+            xhr.send();
+        }
+
+        var deleteButtons = document.querySelectorAll(".delete");
+        deleteButtons.forEach(function (btn) {
+            btn.addEventListener("click", function () {
+                var jobId = btn.getAttribute("data-id");
+                deleteJob(jobId);
+            });
+        });
+
+    </script>
+}
